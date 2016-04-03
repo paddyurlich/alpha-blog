@@ -11,10 +11,19 @@ class ArticlesController < ApplicationController
     
     def edit
         # @article = Article.find(params[:id]) ==> used private method instead "set_article", in before_action
+         
+        #temporaryily hardcode a user
+        @article.user = User.first      
+        
     end
     
     def update
         #@article = Article.find(params[:id]) ==> used private method instead "set_article", in before_action
+    
+        #temporaryily hardcode a user
+        @article.user = User.first
+        
+        @article = Article.new()
         
         if @article.update(article_params)
             flash[:success] = "Article was successfully updated"
@@ -37,8 +46,14 @@ class ArticlesController < ApplicationController
     end
 
     def create
+        # debugger
+        
         # render plain: params[:article].inspect
         @article = Article.new(article_params)
+        
+        #temporaryily hardcode a user
+        @article.user = User.first
+        
         if @article.save
             flash[:success] = "Article was successfully created"
             #note: flash message code added to partial, _messages.html.erb then rendered in application.html.erb 
