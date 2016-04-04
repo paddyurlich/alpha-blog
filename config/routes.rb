@@ -11,6 +11,12 @@ Rails.application.routes.draw do
   
   resources :articles
   
+
+  get 'signup', to: 'users#new'
+  
+  #post 'user', to: 'user#create' # this is need in the new users form POST.  OR just do resources as below. 
+  resources :users, except: [:new] # dont want to include the new action beacuse this is already in the user controller. 
+  
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
