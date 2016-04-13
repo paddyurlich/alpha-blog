@@ -1,6 +1,8 @@
 class ArticlesController < ApplicationController
     before_action :set_article, only: [:edit, :update, :show, :destroy]
-
+    before_action :require_user, except: [:index, :show]
+    before_action :require_same_user, only: [:edit, :update, :destroy]
+    
     def index
         # remember the pagination gem
         # before paginatin this was :
@@ -13,10 +15,12 @@ class ArticlesController < ApplicationController
     end
     
     def edit
-        # @article = Article.find(params[:id]) ==> used private method instead "set_article", in before_action
+        #@article = Article.find(params[:id]) ==> used private method instead "set_article", in before_action
          
         #temporaryily hardcode a user
-        @article.user = User.first      
+        #@article.user = User.first
+        #no need to define an article now as this is defined in the set_article before_action
+        
         
     end
     
@@ -24,9 +28,9 @@ class ArticlesController < ApplicationController
         #@article = Article.find(params[:id]) ==> used private method instead "set_article", in before_action
     
         #temporaryily hardcode a user
-        @article.user = User.first
-        
-        @article = Article.new()
+        #@article.user = User.first
+        #@article.user = current_user
+
         
         if @article.update(article_params)
             flash[:success] = "Article was successfully updated"
@@ -49,13 +53,15 @@ class ArticlesController < ApplicationController
     end
 
     def create
-        # debugger
         
         # render plain: params[:article].inspect
         @article = Article.new(article_params)
         
         #temporaryily hardcode a user
-        @article.user = User.first
+        #@article.user = User.first
+        
+        @article.user = current_user
+        
         
         if @article.save
             flash[:success] = "Article was successfully created"
@@ -69,8 +75,7 @@ class ArticlesController < ApplicationController
     
     
 private
-
-    #set the article - used to the before_action at the top. 
+    #set the article - used in the before_action at the top. 
     def set_article
         @article = Article.find(params[:id])
     end
@@ -79,6 +84,20 @@ private
     def article_params
        params.require(:article).permit(:title, :description)
     end
+    
+    
+    def require_same_user
+        if current_user != @article.user
+            flash[:danger] = "You can only edit of delete your own article"
+            redirect_to articles_path
+        end
+    end
+    
+
+    
+    
+    
+    
 end
 
     
