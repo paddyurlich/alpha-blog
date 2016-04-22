@@ -42,6 +42,16 @@ class CategoriesController< ApplicationController
         @category_articles = @category.articles.paginate(page: params[:page], per_page: 5)
     end
     
+    
+    def destroy
+        #@article = Article.find(params[:id]) ==> used private method instead "set_article", in before_action
+        
+        @category = Category.find(params[:id])
+        @category.destroy
+        flash[:danger] = "Category was successfully deleted"
+        redirect_to categories_path
+    end
+    
     private
     def category_params
         params.require(:category).permit(:name)
